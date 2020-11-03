@@ -1,29 +1,38 @@
-import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack'
+import * as React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import LandingPage from '../screens/LocalStorage/LandingPage'
-import Screen2 from '../screens/LocalStorage/Screen2'
-import Screen3 from '../screens/LocalStorage/Screen3'
-import Webviewer from '../screens/Webviewer'
-import Wiki from '../screens/Wiki'
-import AllScreens from '../screens'
+import Favourites from '../screens/Favourites'
+import Home from '../screens/Home'
+import * as Strings from '../constants/Strings'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons} from '@expo/vector-icons';
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === Strings.navHome) {
+              iconName = focused ? Strings.homeIconActive : Strings.homeIcon ;
+            } else if (route.name === Strings.navFavourites) {
+              iconName = focused ? Strings.favIconActive : Strings.favIcon;
+            }
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+        }}
+      >
+        <Tab.Screen name={Strings.navHome}  component={Home} />
+        <Tab.Screen name={Strings.navFavourites} component={Favourites} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
 
 
-const Stack = createStackNavigator();
-
-function RNApp() {
-    return (
-      <NavigationContainer independent={true} >
-        <Stack.Navigator  initialRouteName="AllScreens">
-            <Stack.Screen name="AllScreens" component={AllScreens} />
-            <Stack.Screen name="LocalStorage" component={LandingPage} />
-            <Stack.Screen name="Screen2" component={Screen2} />
-            <Stack.Screen name="Screen3" component={Screen3} />
-            <Stack.Screen name="Wiki" component={Wiki} />
-            <Stack.Screen name="Webviewer" component={Webviewer} />
-        </Stack.Navigator>
-     </NavigationContainer>
-    );
-  }
-    
-  export default (RNApp)

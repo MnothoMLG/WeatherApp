@@ -1,23 +1,33 @@
-import React, { createContext, useState, Component, useEffect, useReducer, useRef } from "react";
-import wikiFetch from './api/wikiApi'
-import {storeCredentials, isLoggedIn , logout} from './api/authApi'
+import React, { createContext } from "react";
+import {weatherFetch , fourdayForecast} from './api/weatherApi'
+import {addToFavs, getAllFavLocations, deleteEntry } from './api/prefsApi'
 
 const AppContext = createContext({})
 export const ContextConsumer = AppContext.Consumer
+export interface ILocationObject {
+    name?: string;
+    coord?: {
+        lat : number ;
+        lon : number
+    }
+}
+
 export type IAppContext = {
-  
-        storeCredentials : (username : string, pass : string)=> Promise<any>;
-        isLoggedIn : () => Promise<boolean> , 
-        logout : () => Promise<any>,
-        wikiFetch : () =>  Promise<any>; //maybe a gen IResponse type
+        addToFavs : (obj : ILocationObject) => Promise<void>,
+        deleteEntry : (locName : string) => Promise<void>,
+        getAllFavLocations :() => Promise<ILocationObject[]>
+        weatherFetch : (coord : {lat : number,lon : number}) =>  Promise<any>; //maybe a gen IResponse type
+        fourdayForecast : (coord : {lat : number,lon : number}) =>  Promise<any>;
 }
 
 const AppContextProvider : React.SFC = ({children}) => {
 
     return (
         <AppContext.Provider 
-            value={{ wikiFetch , logout,
-            storeCredentials, isLoggedIn }}
+            value={{ 
+                weatherFetch ,addToFavs , deleteEntry,
+                getAllFavLocations, fourdayForecast
+            }}
         >
             {children}
         </AppContext.Provider>
@@ -35,7 +45,6 @@ export const withAppContext = (Component : typeof React.Component) => {
             )}
         </ContextConsumer>
     )
-
     return Wrapper
 }
 
